@@ -1,5 +1,5 @@
 const express = require('express');
-const { readAll, findById } = require('./utils/readFiles');
+const { readAll, findById, writeNewInFile, updateMovie } = require('./utils/readFiles');
 
 const app = express();
 
@@ -23,6 +23,35 @@ app.get('/movies/:id', async (req, res) => {
     res.status(200).json(movie);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/movies', async (req, res) => {
+  try {
+    const { movie, price } = req.body;
+    const moviesList = await readAll();
+    const newMovieId = moviesList.length + 1;
+    const newMovie = { id: newMovieId, movie, price };
+
+    moviesList.push(newMovie);
+
+    await writeNewInFile(moviesList);
+
+    res.status(201).json(newMovie);
+  } catch (error) {
+    res.status(400).json({ message: 'algo não está certo' });
+  }
+});
+
+app.put('/movies/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { movie, price } = req.body;
+    const movieUpdated = await updateMovie(Number(id), { movie, price });
+
+    res.status(200).json(movieUpdated);
+  } catch (error) {
+    res.status(400).json({ message: 'algo de errado deu ai' });
   }
 });
 
