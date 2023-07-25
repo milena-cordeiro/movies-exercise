@@ -15,6 +15,22 @@ try {
 }
 });
 
+app.get('/movies/search', async (req, res) => {
+  try {
+    const { q } = req.query;
+
+  const moviesList = await readAll();
+if (q) {
+  const filteredMovies = moviesList.filter((m) => m.movie.toLowerCase().includes(q.toLowerCase()));
+
+  return res.status(200).json(filteredMovies);
+}
+res.status(404).json([]);
+  } catch (error) {
+    res.status(500).json({ message: 'deu ruim ai' });
+  }
+});
+
 app.get('/movies/:id', async (req, res) => {
   try {
     const { id } = req.params;
