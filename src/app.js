@@ -55,4 +55,20 @@ app.put('/movies/:id', async (req, res) => {
   }
 });
 
+app.delete('/movies/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const moviesList = await readAll();
+  
+    const filterMovies = moviesList.filter((m) => m.id !== Number(id));
+
+    await writeNewInFile(filterMovies);
+
+    res.status(204).end();
+  } catch (error) {
+    res.status(400).json({ message: 'não funcionou' });
+  }
+});
+
 module.exports = app;
